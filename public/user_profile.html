@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Profile | SariSupply-Hub</title>
+  <link rel="stylesheet" href="user_profile.css" />
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">SariSupply-Hub</div>
+    <ul class="nav-links">
+      <li><a href="#" id="home-btn">Home</a></li>
+      <li><a href="#" id="cart-btn">Cart</a></li>
+      <li><a href="#">Profile</a></li>
+      <li><a href="#" id="logout-btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Profile Section -->
+  <div class="profile-container">
+    <div class="banner">
+      <input type="file" id="bannerUpload" accept="image/*" hidden />
+      <label for="bannerUpload" class="upload-banner">Upload Store Banner</label>
+      <img id="bannerImage" src="" alt="Store Banner" />
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-image">
+        <input type="file" id="profileUpload" accept="image/*" hidden />
+        <label for="profileUpload" class="upload-profile">📷</label>
+        <img id="profilePic" src="" alt="Profile Picture" />
+      </div>
+
+      <div class="user-info">
+        <h2 id="userName">Loading...</h2>
+        <p id="address">Loading...</p>
+        <p id="userContact">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="user_profile.js"></script>
+</body>
+</html>

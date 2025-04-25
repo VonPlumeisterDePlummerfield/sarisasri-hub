@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SariSupply-Hub | Shop Supplies</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#007BFF" />
+    <link rel="icon" href="images/icons/icon-192.png" />
+</head>
+<body>
+    <!-- Sidebar Overlay Elements (place right after <body>) -->
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" id="close-sidebar">← Back</button>
+        <h3>Filters</h3>
+        <div class="filter">
+            <label for="category">Category</label>
+            <select id="category">
+                <option value="all">All</option>
+                <option value="snacks">Snacks</option>
+                <option value="beverages">Beverages</option>
+                <option value="canned_goods">Canned Goods</option>
+                <option value="school_supplies">School Supplies</option>
+                <option value="powdered_goods">Powdered Goods</option>
+                <option value="bath_body">Bath & Body</option>
+                <option value="laundry_essentials">Laundry Essentials</option>
+            </select>
+        </div>
+        <div class="filter">
+            <label for="price">Price Range</label>
+            <input type="range" id="price" min="0" max="1000" step="10">
+            <span>0 - 1000</span>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <!-- Hamburger Icon for Sidebar -->
+        <div class="menu-icon" id="menu-icon">&#9776;</div>
+        <div class="logo">SariSupply-Hub</div>
+        <ul class="nav-links">
+            <li><a href="#" id="home-btn">Home</a></li>
+            <li><a href="#" id="cart-btn">Cart</a></li>
+            <li><a href="#" id="profile-btn">Profile</a></li>
+            <li><a href="#" id="logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Product Catalog -->
+        <div class="product-catalog">
+            <h2>Available Supplies</h2>
+            <div class="product-grid">
+                <!-- Product Cards -->
+                <div class="product-card">
+                    <img src="images/tempImages/snack.png" alt="Snack Pack">
+                    <div class="product-info">
+                        <h3>Snack Pack</h3>
+                        <p class="price">₱150.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="images/tempImages/water_bottle.png" alt="Beverage Bottle">
+                    <div class="product-info">
+                        <h3>Beverage Bottle</h3>
+                        <p class="price">₱85.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="images/tempImages/canned.png" alt="Canned Goods">
+                    <div class="product-info">
+                        <h3>Canned Goods</h3>
+                        <p class="price">₱120.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="images/tempImages/school.png" alt="School Supplies">
+                    <div class="product-info">
+                        <h3>School Supplies</h3>
+                        <p class="price">₱50.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="images/tempImages/powdered_goods.png" alt="Powdered Goods">
+                    <div class="product-info">
+                        <h3>Powdered Goods</h3>
+                        <p class="price">₱180.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="images/tempImages/bathing.png" alt="Bath and Body">
+                    <div class="product-info">
+                        <h3>Bath & Body</h3>
+                        <p class="price">₱95.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="images/tempImages/laundry.png" alt="Laundry Essentials">
+                    <div class="product-info">
+                        <h3>Laundry Essentials</h3>
+                        <p class="price">₱110.00</p>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <!-- More products can be added here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 SariSupply-Hub | All Rights Reserved</p>
+    </footer>
+    <script>
+        const menuIcon = document.getElementById('menu-icon');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const closeSidebarBtn = document.getElementById('close-sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        menuIcon.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            mainContent.classList.add('sidebar-active');  // Shift content to the right
+        });
+
+        closeSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            mainContent.classList.remove('sidebar-active');  // Reset content position
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            mainContent.classList.remove('sidebar-active');  // Reset content position
+        });
+    </script>
+    <script type="module" src="index.js"></script>
+</body>
+</html>

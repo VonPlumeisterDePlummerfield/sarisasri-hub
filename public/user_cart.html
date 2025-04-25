@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart | SariSupply-Hub</title>
+  <link rel="stylesheet" href="user_cart.css" />
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">SariSupply-Hub</div>
+    <ul class="nav-links">
+      <li><a href="#" id="home-btn">Home</a></li>
+      <li><a href="#" id="cart-btn">Cart</a></li>
+      <li><a href="#" id="profile-btn">Profile</a></li>
+      <li><a href="#" id="logout-btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Cart & Delivery Container -->
+  <div class="cart-delivery-wrapper">
+    <!-- Cart Section -->
+    <div class="cart-container">
+      <h2>Your Shopping Cart</h2>
+
+      <div class="cart-items">
+        <div class="cart-item">
+          <img src="images/temp images/snack.png" alt="Snack">
+          <div class="item-details">
+            <h3>Snack Pack</h3>
+            <p>Quantity: 2</p>
+            <p>Price: ₱150.00</p>
+          </div>
+          <div class="item-total">₱300.00</div>
+        </div>
+
+        <div class="cart-item">
+          <img src="images/temp images/powdered_goods.png" alt="Powdered Goods">
+          <div class="item-details">
+            <h3>Powdered Goods</h3>
+            <p>Quantity: 1</p>
+            <p>Price: ₱180.00</p>
+          </div>
+          <div class="item-total">₱180.00</div>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <p><strong>Total:</strong> ₱480.00</p>
+        <button class="checkout-btn">Proceed to Checkout</button>
+      </div>
+    </div>
+
+    <!-- Delivery Info Section -->
+    <div class="delivery-container">
+      <h3>Delivery Information</h3>
+      <p><strong>Full Name:</strong> Juan Dela Cruz</p>
+      <p><strong>Address:</strong> 123 Mabuhay Street, Barangay Maligaya, Quezon City</p>
+      <p><strong>Contact Number:</strong> 0917-123-4567</p>
+    </div>
+  </div>
+  <script type="module" src="user_cart.js"></script>
+</body>
+</html>
