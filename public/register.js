@@ -7,16 +7,6 @@ import {
     setDoc
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-// Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyA6V7_3yqmTWz84pmzTFo9PQyCZZNCkxGs",
-    authDomain: "sarisupply-hub.firebaseapp.com",
-    projectId: "sarisupply-hub",
-    storageBucket: "sarisupply-hub.appspot.com",
-    messagingSenderId: "999090750567",
-    appId: "1:999090750567:web:ea5ac4353834c8bfa800c2"
-};
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

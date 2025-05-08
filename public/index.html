@@ -19,20 +19,20 @@
             <label for="category">Category</label>
             <select id="category">
                 <option value="all">All</option>
-                <option value="snacks">Snacks</option>
-                <option value="beverages">Beverages</option>
-                <option value="canned_goods">Canned Goods</option>
-                <option value="school_supplies">School Supplies</option>
-                <option value="powdered_goods">Powdered Goods</option>
-                <option value="bath_body">Bath & Body</option>
-                <option value="laundry_essentials">Laundry Essentials</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Canned Goods">Canned Goods</option>
+                <option value="School Supplies">School Supplies</option>
+                <option value="Powdered Goods">Powdered Goods</option>
+                <option value="Bath & Body">Bath & Body</option>
+                <option value="Laundry Essentials">Laundry Essentials</option>
             </select>
         </div>
         <div class="filter">
             <label for="price">Price Range</label>
-            <input type="range" id="price" min="0" max="1000" step="10">
-            <span>0 - 1000</span>
-        </div>
+            <input type="range" id="price" min="0" max="1000" step="10" value="1000">
+            <span id="price-range">₱1000</span>
+        </div>            
     </div>
 
     <!-- Navigation Bar -->
@@ -53,72 +53,9 @@
         <!-- Product Catalog -->
         <div class="product-catalog">
             <h2>Available Supplies</h2>
-            <div class="product-grid">
-                <!-- Product Cards -->
-                <div class="product-card">
-                    <img src="images/tempImages/snack.png" alt="Snack Pack">
-                    <div class="product-info">
-                        <h3>Snack Pack</h3>
-                        <p class="price">₱150.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <img src="images/tempImages/water_bottle.png" alt="Beverage Bottle">
-                    <div class="product-info">
-                        <h3>Beverage Bottle</h3>
-                        <p class="price">₱85.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <img src="images/tempImages/canned.png" alt="Canned Goods">
-                    <div class="product-info">
-                        <h3>Canned Goods</h3>
-                        <p class="price">₱120.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <img src="images/tempImages/school.png" alt="School Supplies">
-                    <div class="product-info">
-                        <h3>School Supplies</h3>
-                        <p class="price">₱50.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <img src="images/tempImages/powdered_goods.png" alt="Powdered Goods">
-                    <div class="product-info">
-                        <h3>Powdered Goods</h3>
-                        <p class="price">₱180.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <img src="images/tempImages/bathing.png" alt="Bath and Body">
-                    <div class="product-info">
-                        <h3>Bath & Body</h3>
-                        <p class="price">₱95.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <img src="images/tempImages/laundry.png" alt="Laundry Essentials">
-                    <div class="product-info">
-                        <h3>Laundry Essentials</h3>
-                        <p class="price">₱110.00</p>
-                        <button class="add-to-cart">Add to Cart</button>
-                    </div>
-                </div>
-
-                <!-- More products can be added here -->
+            <div id="loading-message" class="loading"></div>
+            <div class="product-grid" id="product-grid">
+                     <!-- Product cards will be dynamically inserted here -->
             </div>
         </div>
     </div>
@@ -152,6 +89,33 @@
             mainContent.classList.remove('sidebar-active');  // Reset content position
         });
     </script>
+
+<!-- Product Overlay -->
+<div id="product-overlay" class="product-overlay">
+    <div class="overlay-content">
+        <button id="close-overlay-btn" class="close-overlay-btn">✕</button>
+        <img id="overlay-image" class="overlay-image" src="" alt="Product Image">
+        <h3 id="overlay-name" class="overlay-name"></h3>
+        <p id="overlay-category" class="overlay-text"></p>
+        <p id="overlay-stock" class="overlay-text"></p>
+        <p id="overlay-price" class="overlay-text"></p>
+
+        <div class="quantity-selector">
+            <button id="decrease-qty-btn" class="qty-btn">−</button>
+            <input type="number" id="quantity-input" min="1" value="1">
+            <button id="increase-qty-btn" class="qty-btn">+</button>
+        </div>
+
+        <p id="overlay-total" class="overlay-total">Total: ₱0.00</p>
+        <div id="overlay-loading-spinner" style="display: none; text-align: center; margin-top: 1rem;">
+            <div class="loading-spinner"></div>
+            <p>Adding to cart...</p>
+        </div>
+        <button id="confirm-add-to-cart" class="overlay-add-to-cart-btn">Add to Cart</button>
+    </div>
+</div>
+
+    <script src="firebase-config.js"></script>
     <script type="module" src="index.js"></script>
 </body>
 </html>

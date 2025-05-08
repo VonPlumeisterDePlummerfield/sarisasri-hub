@@ -5,6 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>User Profile | SariSupply-Hub</title>
   <link rel="stylesheet" href="user_profile.css" />
+  <style>
+    /* Modal Styles */
+    .image-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+    }
+
+    .image-modal img {
+      max-width: 90%;
+      max-height: 90%;
+      transition: transform 0.3s ease;
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -23,14 +43,14 @@
     <div class="banner">
       <input type="file" id="bannerUpload" accept="image/*" hidden />
       <label for="bannerUpload" class="upload-banner">Upload Store Banner</label>
-      <img id="bannerImage" src="" alt="Store Banner" />
+      <img id="bannerImage" src="" alt="Store Banner" loading="lazy" class="zoomable" />
     </div>
 
     <div class="profile-content">
       <div class="profile-image">
         <input type="file" id="profileUpload" accept="image/*" hidden />
         <label for="profileUpload" class="upload-profile">📷</label>
-        <img id="profilePic" src="" alt="Profile Picture" />
+        <img id="profilePic" src="" alt="Profile Picture" loading="lazy" class="zoomable" />
       </div>
 
       <div class="user-info">
@@ -41,6 +61,41 @@
     </div>
   </div>
 
+  <!-- Modal for Zoomed Image -->
+  <div class="image-modal" id="imageModal">
+    <img id="modalImage" src="" alt="Zoomed Image" />
+  </div>
+  
+  <script src="firebase-config.js"></script>
   <script type="module" src="user_profile.js"></script>
+  <script>
+    // Zoomable image logic
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+
+    document.querySelectorAll(".zoomable").forEach(img => {
+      img.addEventListener("click", () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+        modalImg.style.transform = "scale(1)";
+      });
+    });
+
+    // Close modal on click
+    modal.addEventListener("click", () => {
+      modal.style.display = "none";
+      modalImg.src = "";
+    });
+
+    // Zoom in/out with mouse wheel
+    modal.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      let scale = parseFloat(modalImg.style.transform.replace(/[^0-9.]/g, "")) || 1;
+      scale += (e.deltaY < 0) ? 0.1 : -0.1;
+      scale = Math.max(0.5, Math.min(3, scale));
+      modalImg.style.transform = `scale(${scale})`;
+    }, { passive: false });
+  </script>
+  
 </body>
 </html>

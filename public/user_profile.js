@@ -1,27 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyA6V7_3yqmTWz84pmzTFo9PQyCZZNCkxGs",
-  authDomain: "sarisupply-hub.firebaseapp.com",
-  projectId: "sarisupply-hub",
-  storageBucket: "sarisupply-hub.appspot.com",
-  messagingSenderId: "999090750567",
-  appId: "1:999090750567:web:ea5ac4353834c8bfa800c2"
-};
-
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-const IMGUR_CLIENT_ID = "100b656f9dce338";
 
 // DOM Elements
 const homeBtn = document.getElementById('home-btn');
@@ -32,119 +16,181 @@ const profilePic = document.getElementById('profilePic');
 const userName = document.getElementById('userName');
 const userAddress = document.getElementById('address');
 const userContact = document.getElementById('userContact');
+const profileUpload = document.getElementById('profileUpload');
+const bannerUpload = document.getElementById('bannerUpload');
 
 let currentUserId = null;
+let unsubscribeUser = null;
 
 // Navigation
 homeBtn?.addEventListener('click', () => window.location.href = "index.html");
 cartBtn?.addEventListener('click', () => window.location.href = "user_cart.html");
 logoutBtn?.addEventListener('click', () => {
-  signOut(auth).then(() => window.location.href = "login.html");
+  signOut(auth).then(() => window.location.href = "login.html")
+               .catch((err) => console.error("Logout failed:", err));
 });
 
-// Upload to Imgur
-async function uploadToImgur(file) {
-  const formData = new FormData();
-  formData.append("image", file);
+// Image compression function
+const compressImageToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
-  const response = await fetch("https://api.imgur.com/3/image", {
-    method: "POST",
-    headers: {
-      Authorization: `Client-ID ${IMGUR_CLIENT_ID}`
-    },
-    body: formData
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX_SIZE = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height *= MAX_SIZE / width;
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width *= MAX_SIZE / height;
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const quality = 0.7;
+        const base64 = canvas.toDataURL('image/jpeg', quality);
+        resolve(base64);
+      };
+      img.onerror = error => reject(error);
+      img.src = event.target.result;
+    };
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
   });
+};
 
-  const result = await response.json();
-  if (result.success) return result.data.link;
-  else throw new Error("Imgur upload failed");
-}
-
-// Update and display profile picture with preview
-document.getElementById('profileUpload')?.addEventListener('change', async (e) => {
+// Handle profile picture upload
+profileUpload?.addEventListener('change', async (e) => {
   const file = e.target.files[0];
-  if (file && currentUserId) {
+  if (!file || !currentUserId) return;
+
+  try {
     const previewUrl = URL.createObjectURL(file);
     profilePic.src = previewUrl;
 
-    try {
-      const imageUrl = await uploadToImgur(file);
-      await updateDoc(doc(db, "users", currentUserId), { profileUrl: imageUrl });
-      profilePic.src = imageUrl;
-    } catch (err) {
-      console.error("❌ Error uploading profile image:", err);
-    }
+    const compressedImage = await compressImageToBase64(file);
+    await updateDoc(doc(db, "users", currentUserId), {
+      profileBase64: compressedImage
+    });
+
+    console.log('Profile image updated in Firestore');
+  } catch (err) {
+    console.error("Profile upload failed:", err);
+    profilePic.src = "images/pfp.jpg";
   }
 });
 
-// Update and display banner image with preview
-document.getElementById('bannerUpload')?.addEventListener('change', async (e) => {
+// Handle banner image upload
+bannerUpload?.addEventListener('change', async (e) => {
   const file = e.target.files[0];
-  if (file && currentUserId) {
+  if (!file || !currentUserId) return;
+
+  try {
     const previewUrl = URL.createObjectURL(file);
     bannerImage.src = previewUrl;
 
-    try {
-      const imageUrl = await uploadToImgur(file);
-      await updateDoc(doc(db, "users", currentUserId), { bannerUrl: imageUrl });
-      bannerImage.src = imageUrl;
-    } catch (err) {
-      console.error("❌ Error uploading banner image:", err);
-    }
+    const compressedImage = await compressImageToBase64(file);
+    await updateDoc(doc(db, "users", currentUserId), {
+      bannerBase64: compressedImage
+    });
+
+    console.log('Banner image updated in Firestore');
+  } catch (err) {
+    console.error("Banner upload failed:", err);
+    bannerImage.src = "images/banner.jpg";
   }
 });
 
-// Load user data
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = "login.html";
+// Set up Firestore listener
+function setupUserListener(userId) {
+  if (unsubscribeUser) unsubscribeUser();
+
+  const userRef = doc(db, "users", userId);
+
+  unsubscribeUser = onSnapshot(userRef, (docSnap) => {
+    if (!docSnap.exists()) {
+      console.warn("User document not found");
       return;
     }
-  
-    currentUserId = user.uid;
-    try {
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-  
-      if (!userSnap.exists()) {
-        userName.textContent = "User profile not found.";
-        return;
-      }
-  
-      const userData = userSnap.data();
-      const { firstName, middleName, lastName, address, phone, profileUrl, bannerUrl } = userData;
-  
-      const middleInitial = middleName ? `${middleName.charAt(0)}.` : '';
-      const fullName = `${firstName} ${middleInitial} ${lastName}`.trim();
-  
-      userName.textContent = fullName || "Name not set";
-      userAddress.textContent = `Address: ${address || "N/A"}`;
-      userContact.textContent = `Contact Number: ${phone || "N/A"}`;
-  
-      // Load profile image with fallback
-      const profileFallback = "images/pfp.jpg";
-      profilePic.src = profileUrl ? profileUrl : profileFallback;
 
-      // Use the onload and onerror events to ensure that image loads properly
-      profilePic.onload = () => console.log("Profile image loaded successfully");
-      profilePic.onerror = () => {
-        console.warn("⚠️ Failed to load profile image, using fallback.");
-        profilePic.src = profileFallback;
-      };
-  
-      // Load banner image with fallback
-      const bannerFallback = "images/banner.jpg";
-      bannerImage.src = bannerUrl ? bannerUrl : bannerFallback;
-      bannerImage.onload = () => console.log("Banner image loaded successfully");
-      bannerImage.onerror = () => {
-        console.warn("⚠️ Failed to load banner image, using fallback.");
-        bannerImage.src = bannerFallback;
-      };
-  
-    } catch (err) {
-      console.error("✕ Error loading user profile images:", err);
-      // Apply fallbacks in case of unexpected errors
+    const data = docSnap.data();
+    console.log("User data:", data);
+
+    const {
+      firstName = "",
+      middleName = "",
+      lastName = "",
+      address = "N/A",
+      phone = "N/A",
+      profileBase64,
+      bannerBase64
+    } = data;
+
+    // Construct full name with middle initial
+    const middleInitial = middleName ? `${middleName.charAt(0)}.` : "";
+    const fullName = `${firstName} ${middleInitial} ${lastName}`.trim();
+
+    // Only update if content changed
+    if (userName.textContent !== fullName) userName.textContent = fullName;
+    if (userAddress.textContent !== `Address: ${address}`) userAddress.textContent = `Address: ${address}`;
+    if (userContact.textContent !== `Contact Number: ${phone}`) userContact.textContent = `Contact Number: ${phone}`;
+
+    // Update profile picture (only if different)
+    if (profilePic.src !== profileBase64 && profileBase64) {
+      profilePic.src = profileBase64;
+    } else if (!profileBase64 && profilePic.src !== location.origin + "/images/pfp.jpg") {
       profilePic.src = "images/pfp.jpg";
+    }
+
+    profilePic.onerror = () => {
+      if (profilePic.src !== location.origin + "/images/pfp.jpg") {
+        console.warn("Failed to load profile image, using fallback");
+        profilePic.src = "images/pfp.jpg";
+      }
+    };
+
+    // Update banner image (only if different)
+    if (bannerImage.src !== bannerBase64 && bannerBase64) {
+      bannerImage.src = bannerBase64;
+    } else if (!bannerBase64 && bannerImage.src !== location.origin + "/images/banner.jpg") {
       bannerImage.src = "images/banner.jpg";
     }
+
+    bannerImage.onerror = () => {
+      if (bannerImage.src !== location.origin + "/images/banner.jpg") {
+        console.warn("Failed to load banner image, using fallback");
+        bannerImage.src = "images/banner.jpg";
+      }
+    };
+  }, (error) => {
+    console.error("Error fetching user data:", error);
   });
+}
+
+// Auth state
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    currentUserId = user.uid;
+    setupUserListener(user.uid);
+  }
+});
+
+// Clean up
+window.addEventListener('beforeunload', () => {
+  if (unsubscribeUser) unsubscribeUser();
+});

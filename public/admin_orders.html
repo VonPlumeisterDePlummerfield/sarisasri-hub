@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SariSupply-Hub | View Orders</title>
+  <link rel="stylesheet" href="admin_orders.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">SariSupply-Hub Admin</div>
+    <ul class="nav-links">
+      <li><a href="admin.html" id="home-btn">Home</a></li>
+      <li><a href="admin_manage_products.html" id="manage-products">Manage Products</a></li>
+      <li><a href="admin_orders.html" id="view-orders">View Orders</a></li>
+      <li><a href="#" id="logout-btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <h2 class="orders-title">Customer Orders</h2>
+    <div class="admin-orders">
+      <div class="orders-list" id="orders-list">
+        <!-- Orders will be dynamically loaded here -->
+      </div>
+      <div class="completed-orders" id="completed-orders">
+        <!-- Completed orders will be dynamically loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 SariSupply-Hub | Admin Panel</p>
+  </footer>
+  <script src="firebase-config.js"></script>
+  <script type="module" src="admin_orders.js"></script>
+</body>
+</html>
