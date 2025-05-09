@@ -23,5 +23,4 @@ It allows users to browse, order, and manage products, while admins handle inven
 ## 🛠️ Tech Stack
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Firebase Firestore, Firebase Authentication
-- **Image Uploads:** Imgur API
 - **Deployment:** GitHub Pages or Firebase Hosting (optional)
